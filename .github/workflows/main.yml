@@ -10,8 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: configure
-      run: mkdir build
+      run: cmake .
     - name: build
-      run: cmake --build build --target all
+      run: cmake --build . --target all
     - name: test
-      run: cd build/test && ./Catch_tests_run
+      run: cd test && ./Catch_tests_run
