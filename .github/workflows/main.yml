@@ -1,0 +1,17 @@
+name: C++
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: configure
+      run: mkdir build
+    - name: build
+      run: cmake --build build
+    - name: test
+      run: cd build/test && ./Catch_tests_run
