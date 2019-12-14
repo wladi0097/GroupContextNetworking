@@ -12,6 +12,6 @@ jobs:
     - name: configure
       run: mkdir build
     - name: build
-      run: cmake --build build
+      run: cmake --build build --target all
     - name: test
       run: cd build/test && ./Catch_tests_run
