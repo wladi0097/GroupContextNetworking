@@ -21,25 +21,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef NET_GROUPMANAGER_H
-#define NET_GROUPMANAGER_H
+#include "MainInterface.h"
 
+App App::app() {
+    return App();
+}
 
-#include <vector>
-#include "./Models/Group.h"
-#include "./Models/User.h"
+App App::connect(std::function<void(Socket)> &&handler) {
+    return App();
+}
 
-class GroupManager {
- private:
-    std::vector<Models::Group> groups;
+App App::disconnect(std::function<void(Socket)> &&handler) {
+    return App();
+}
 
-public:
-    Models::User joinGroup();
-    Models::User joinGroup(const std::string& groupId);
-    void leaveGroup();
-    Models::Group getGroup(const std::string& groupId);
-    void removeGroup(const std::string& groupId);
-    void removeGroupWithAllUsers(const std::string& groupId);
-};
-
-#endif //NET_GROUPMANAGER_H
+App App::message(std::string pattern, std::function<void(Socket)> &&handler) {
+    return App();
+}

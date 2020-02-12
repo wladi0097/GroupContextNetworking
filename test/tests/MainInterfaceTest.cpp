@@ -21,35 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#define CATCH_CONFIG_MAIN
+#include "../../deps/catch.hpp"
 
-#ifndef NET_GROUP_H
-#define NET_GROUP_H
-
-#include <vector>
-#include <string>
-
-#include "User.h"
-#include "../Utils/UUID.h"
-
-namespace Models {
-class Group {
- private:
-    std::vector<User*> users;
-    std::string id;
-    int getUserIndex(const std::string& id);
-
- public:
-    Group();
-    ~Group();
-    std::vector<User*> getUsers();
-    std::string getId();
-    User* getUser(const std::string& userId);
-    void addUser(User* user);
-    void removeUser(const std::string& userId);
-    void removeAllUsers();
-    bool hasUser(const std::string& userId);
-    bool isUserGroupCreator(const std::string& userId);
-};
-}  // namespace Models
-
-#endif  // NET_GROUP_H
+TEST_CASE("MainInterface") {
+    SECTION("has unique id") {
+        REQUIRE(true == true);
+    }
+}

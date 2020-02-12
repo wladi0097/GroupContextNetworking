@@ -20,68 +20,55 @@ LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "GroupManager.h"
 
-#include "Group.h"
-
-using namespace Models;
-
-Group::Group() {
-    this->id = Utils::generateUUID();
+Models::User* GroupManager::joinGroup() {
+    return this->createGroupWithUser();
 }
 
-Group::~Group() = default;
-
-std::vector<User *> Group::getUsers() {
-    return this->users;
-}
-
-std::string Group::getId() {
-    return this->id;
-}
-
-User *Group::getUser(const std::string &userId) {
-    for (User *user : this->users) {
-        if (user->getId() == userId)
-            return user;
+Models::User* GroupManager::joinGroup(const std::string &groupId) {
+    Models::Group* group = this->getGroup(groupId);
+    if (group) {
+        auto* user = new Models::User(group);
+        return user;
+    } else {
+        return this->createGroupWithUser();
     }
+}
+
+Models::Group* GroupManager::getGroup(const std::string &groupId) {
+    for (Models::Group *group : this->groups) {
+        if (group->getId() == groupId) {
+            return group;
+        }
+    }
+
     return nullptr;
 }
 
-void Group::addUser(User *user) {
-    this->users.push_back(user);
+Models::User* GroupManager::createGroupWithUser() {
+    auto* group = new Models::Group;
+    this->groups.push_back(group);
+
+    auto* user = new Models::User(group, true);
+    return user;
 }
 
-void Group::removeUser(const std::string &userId) {
-    int index = this->getUserIndex(userId);
+void GroupManager::removeGroup(const std::string &groupId) {
+    const int index = this->getGroupIndex(groupId);
     if (index != -1) {
-        User* user = this->users[index];
-        this->users.erase(this->users.begin() + index);
-        delete user;
+        Models::Group* group = this->groups[index];
+        group->removeAllUsers();
+
+        this->groups.erase(this->groups.begin() + index);
+        delete group;
     }
 }
 
-int Group::getUserIndex(const std::string &userId) {
-    for (__int16_t i = 0; i < this->users.size(); ++i) {
-        if (users[i]->getId() == userId)
+int GroupManager::getGroupIndex(const std::string &groupId) {
+    for (__int16_t i = 0; i < this->groups.size(); ++i) {
+        if (groups[i]->getId() == groupId)
             return i;
     }
     return -1;
-}
-
-bool Group::hasUser(const std::string &userId) {
-    return this->getUser(userId) != nullptr;
-}
-
-bool Group::isUserGroupCreator(const std::string &userId) {
-    User* user = this->getUser(userId);
-
-    if (user == nullptr) return false;
-
-    return user->getIsGroupLeader();
-}
-
-void Group::removeAllUsers() {
-    for (User *user : this->users) {
-        this->removeUser(user->getId());
-    }
 }

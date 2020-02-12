@@ -1,5 +1,4 @@
-#define CATCH_CONFIG_MAIN
-#include "../catch.hpp"
+#include "../TestBase.h"
 #include "../../src/Models/User.h"
 #include "../../src/Models/Group.h"
 
@@ -11,7 +10,6 @@ TEST_CASE("Constructor") {
         REQUIRE(!empty(group->getId()));
     }
 }
-
 
 TEST_CASE("Adding User") {
     SECTION("Single User") {

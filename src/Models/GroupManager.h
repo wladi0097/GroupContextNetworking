@@ -21,35 +21,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifndef NET_GROUPMANAGER_H
+#define NET_GROUPMANAGER_H
 
-#ifndef NET_GROUP_H
-#define NET_GROUP_H
 
 #include <vector>
 #include <string>
+#include "./Models/Group.h"
+#include "./Models/User.h"
 
-#include "User.h"
-#include "../Utils/UUID.h"
-
-namespace Models {
-class Group {
+class GroupManager {
  private:
-    std::vector<User*> users;
-    std::string id;
-    int getUserIndex(const std::string& id);
+    std::vector<Models::Group*> groups;
+    Models::User* createGroupWithUser();
+    int getGroupIndex(const std::string& groupId);
 
  public:
-    Group();
-    ~Group();
-    std::vector<User*> getUsers();
-    std::string getId();
-    User* getUser(const std::string& userId);
-    void addUser(User* user);
-    void removeUser(const std::string& userId);
-    void removeAllUsers();
-    bool hasUser(const std::string& userId);
-    bool isUserGroupCreator(const std::string& userId);
+    Models::User* joinGroup();
+    Models::User* joinGroup(const std::string& groupId);
+    Models::Group* getGroup(const std::string& groupId);
+    void removeGroup(const std::string& groupId);
 };
-}  // namespace Models
 
-#endif  // NET_GROUP_H
+#endif  // NET_GROUPMANAGER_H

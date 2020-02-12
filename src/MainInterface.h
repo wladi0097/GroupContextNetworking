@@ -20,4 +20,20 @@ LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "GroupManager.h"
+
+#ifndef NET_GROUPCONTEXTNETWORKING_H
+#define NET_GROUPCONTEXTNETWORKING_H
+
+#include <functional>
+#include <string>
+#include "Socket.h"
+
+class App {
+ public:
+    static App app();
+    App connect(std::function<void(Socket)> &&handler);
+    App disconnect(std::function<void(Socket)> &&handler);
+    App message(std::string pattern, std::function<void(Socket)> &&handler);
+};
+
+#endif //NET_GROUPCONTEXTNETWORKING_H
