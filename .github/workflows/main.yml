@@ -1,0 +1,21 @@
+name: C++
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: install new version of cmake
+      run: |
+          curl -sSL https://github.com/Kitware/CMake/releases/download/v3.15.4/cmake-3.15.4-Linux-x86_64.tar.gz -o cmake.tar.gz
+          sudo tar xf cmake.tar.gz --strip 1 -C /usr/local
+    - name: configure
+      run: cmake .
+    - name: build
+      run: cmake --build . --target all
+    - name: test
+      run: cd test && ./Catch_tests_run
