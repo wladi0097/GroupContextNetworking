@@ -27,8 +27,8 @@ SOFTWARE.
 
 #include <vector>
 #include <string>
-#include "./Models/Group.h"
-#include "./Models/User.h"
+#include "Group.h"
+#include "User.h"
 
 class GroupManager {
  private:
