@@ -44,7 +44,7 @@ class Group {
     ~Group();
     std::string getId();
     User* getUser(const std::string& userId);
-    User* addUser();
+    User* addUser(const bool isCreator);
     void removeUser(const std::string& userId);
     bool hasUser(const std::string& userId);
     __int16_t getUserSize();

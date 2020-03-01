@@ -40,7 +40,7 @@ TEST_CASE("Group: Adding User") {
         std::unique_ptr<Group> group =
                 std::make_unique<Group>();
 
-        auto user = group->addUser();
+        auto user = group->addUser(false);
 
         REQUIRE(group->getUser(user->getId()) == user);
     }
@@ -49,8 +49,8 @@ TEST_CASE("Group: Adding User") {
         std::unique_ptr<Group> group =
                 std::make_unique<Group>();
 
-        auto* user1 = group->addUser();
-        auto* user2 = group->addUser();
+        auto* user1 = group->addUser(false);
+        auto* user2 = group->addUser(false);
 
         REQUIRE(group->getUser(user1->getId()) == user1);
         REQUIRE(group->getUser(user2->getId()) == user2);
@@ -62,7 +62,7 @@ TEST_CASE("Group: Getting Users") {
         std::unique_ptr<Group> group =
                 std::make_unique<Group>();
 
-        auto* user = group->addUser();
+        auto* user = group->addUser(false);
 
         REQUIRE(group->getUser(user->getId()) == user);
     }
@@ -78,7 +78,7 @@ TEST_CASE("Group: Getting Users") {
         std::unique_ptr<Group> group =
                 std::make_unique<Group>();
 
-        auto* user = group->addUser();
+        auto* user = group->addUser(false);
 
         REQUIRE(group->hasUser(user->getId()));
     }
@@ -96,7 +96,7 @@ TEST_CASE("Group: Removing Users") {
         std::unique_ptr<Group> group =
                 std::make_unique<Group>();
 
-        auto* user = group->addUser();
+        auto* user = group->addUser(false);
 
         REQUIRE(group->getUser(user->getId()) == user);
 

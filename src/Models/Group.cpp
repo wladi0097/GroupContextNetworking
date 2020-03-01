@@ -43,9 +43,9 @@ User *Group::getUser(const std::string &userId) {
     return nullptr;
 }
 
-User* Group::addUser() {
+User* Group::addUser(const bool isCreator) {
     std::unique_ptr<Models::User> user =
-            std::make_unique<Models::User>(this, true);
+            std::make_unique<Models::User>(this, isCreator);
     users.push_back(std::move(user));
 
     return users.back().get();

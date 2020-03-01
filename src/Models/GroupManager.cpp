@@ -29,7 +29,7 @@ Models::User* GroupManager::joinGroup() {
 Models::User* GroupManager::joinGroup(const std::string &groupId) {
     Models::Group* group = getGroup(groupId);
     if (group) {
-        return GroupManager::createUser(group);
+        return GroupManager::createUser(group, false);
     } else {
         return createGroupWithUser();
     }
@@ -49,7 +49,7 @@ Models::User* GroupManager::createGroupWithUser() {
     std::unique_ptr<Models::Group> group = std::make_unique<Models::Group>();
     groups.push_back(std::move(group));
 
-    return createUser(groups.back().get());
+    return createUser(groups.back().get(), true);
 }
 
 void GroupManager::removeGroup(const std::string &groupId) {
@@ -67,8 +67,8 @@ int16_t GroupManager::getGroupIndex(const std::string &groupId) {
     return -1;
 }
 
-Models::User *GroupManager::createUser(Models::Group *group) {
-    auto* user = group->addUser();
+Models::User *GroupManager::createUser(Models::Group *group, const bool isCreator) {
+    auto* user = group->addUser(isCreator);
     return user;
 }
 

@@ -39,11 +39,13 @@ TEST_CASE("GroupManager: join") {
     SECTION("Joining an existing group will create and add a user") {
         std::unique_ptr<GroupManager> groupManager =
                 std::make_unique<GroupManager>();
-        auto* user = groupManager->joinGroup();
-        auto* group = user->getGroup();
+        auto* user1 = groupManager->joinGroup();
+        auto* group = user1->getGroup();
+        auto* user2 = groupManager->joinGroup(group->getId());
 
-        groupManager->joinGroup(group->getId());
         REQUIRE(group->getUserSize() == 2);
+        REQUIRE(user1->getIsGroupLeader());
+        REQUIRE(!user2->getIsGroupLeader());
     }
 
     SECTION("Joining a non existent group will create one") {

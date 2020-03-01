@@ -35,7 +35,7 @@ class GroupManager {
  private:
     std::vector<std::unique_ptr<Models::Group>> groups;
     Models::User* createGroupWithUser();
-    static Models::User* createUser(Models::Group* group);
+    static Models::User* createUser(Models::Group* group, const bool isCreator);
     int16_t getGroupIndex(const std::string& groupId);
     void removeGroup(const std::string& groupId);
 
