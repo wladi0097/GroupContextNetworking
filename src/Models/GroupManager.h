@@ -21,8 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef NET_GROUPMANAGER_H
-#define NET_GROUPMANAGER_H
+#ifndef SRC_MODELS_GROUPMANAGER_H_
+#define SRC_MODELS_GROUPMANAGER_H_
 
 
 #include <vector>
@@ -35,7 +35,7 @@ class GroupManager {
  private:
     std::vector<std::unique_ptr<Models::Group>> groups;
     Models::User* createGroupWithUser();
-    static Models::User* createUser(Models::Group* group, const bool isCreator);
+    static Models::User* createUser(Models::Group* group, bool isCreator);
     int16_t getGroupIndex(const std::string& groupId);
     void removeGroup(const std::string& groupId);
 
@@ -47,4 +47,4 @@ class GroupManager {
     int16_t getGroupSize();
 };
 
-#endif  // NET_GROUPMANAGER_H
+#endif  // SRC_MODELS_GROUPMANAGER_H_

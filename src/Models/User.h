@@ -21,8 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef NET_USER_H
-#define NET_USER_H
+#ifndef SRC_MODELS_USER_H_
+#define SRC_MODELS_USER_H_
 
 #include <string>
 #include "../Utils/UUID.h"
@@ -45,4 +45,4 @@ class User {
 };
 }  // namespace Models
 
-#endif  // NET_USER_H
+#endif  // SRC_MODELS_USER_H_

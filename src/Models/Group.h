@@ -22,8 +22,8 @@ SOFTWARE.
 */
 
 
-#ifndef NET_GROUP_H
-#define NET_GROUP_H
+#ifndef SRC_MODELS_GROUP_H_
+#define SRC_MODELS_GROUP_H_
 
 #include <vector>
 #include <string>
@@ -44,7 +44,7 @@ class Group {
     ~Group();
     std::string getId();
     User* getUser(const std::string& userId);
-    User* addUser(const bool isCreator);
+    User* addUser(bool isCreator);
     void removeUser(const std::string& userId);
     bool hasUser(const std::string& userId);
     __int16_t getUserSize();
@@ -52,4 +52,4 @@ class Group {
 };
 }  // namespace Models
 
-#endif  // NET_GROUP_H
+#endif  // SRC_MODELS_GROUP_H_
