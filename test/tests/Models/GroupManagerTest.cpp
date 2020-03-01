@@ -41,7 +41,7 @@ TEST_CASE("GroupManager: join") {
         auto* group = user->getGroup();
 
         groupManager->joinGroup(group->getId());
-        REQUIRE(group->getUsers().size() == 2);
+        REQUIRE(group->getUserSize() == 2);
     }
 
     SECTION("joining a non existent group will create one") {
@@ -51,7 +51,7 @@ TEST_CASE("GroupManager: join") {
 
         REQUIRE(!user->getId().empty());
         REQUIRE(!group->getId().empty());
-        REQUIRE(groupManager->getGroups().size() == 1);
+        REQUIRE(groupManager->getGroupSize() == 1);
         REQUIRE(group->getUser(user->getId())->getId() == user->getId());
     }
 
@@ -65,6 +65,29 @@ TEST_CASE("GroupManager: join") {
         REQUIRE(user2->getId() != user3->getId());
         REQUIRE(user1->getGroup()->getId() != user2->getGroup()->getId());
         REQUIRE(user2->getGroup()->getId() != user3->getGroup()->getId());
-        REQUIRE(groupManager->getGroups().size() == 3);
+        REQUIRE(groupManager->getGroupSize() == 3);
+    }
+}
+
+TEST_CASE("GroupManager: leave") {
+    SECTION("One user leaves group will just remove that one user") {
+        auto* groupManager = new GroupManager;
+        auto* user1 = groupManager->joinGroup();
+        auto* group = user1->getGroup();
+        auto* user2 = groupManager->joinGroup(group->getId());
+
+        groupManager->leaveGroup(user1);
+
+        REQUIRE(group->getUserSize() == 1);
+    }
+
+    SECTION("Last user leaves group, deletes it") {
+        auto* groupManager = new GroupManager;
+        auto* user = groupManager->joinGroup();
+        auto* group = user->getGroup();
+
+        groupManager->leaveGroup(user);
+
+        REQUIRE(groupManager->getGroupSize() == 0);
     }
 }

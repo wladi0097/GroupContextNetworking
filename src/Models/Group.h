@@ -27,6 +27,7 @@ SOFTWARE.
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "User.h"
 #include "../Utils/UUID.h"
@@ -34,20 +35,19 @@ SOFTWARE.
 namespace Models {
 class Group {
  private:
-    std::vector<User*> users;
+    std::vector<std::unique_ptr<User>> users;
     std::string id;
     int getUserIndex(const std::string& id);
 
  public:
     Group();
     ~Group();
-    std::vector<User*> getUsers();
     std::string getId();
     User* getUser(const std::string& userId);
-    void addUser(User* user);
+    User* addUser();
     void removeUser(const std::string& userId);
-    void removeAllUsers();
     bool hasUser(const std::string& userId);
+    __int16_t getUserSize();
     bool isUserGroupCreator(const std::string& userId);
 };
 }  // namespace Models

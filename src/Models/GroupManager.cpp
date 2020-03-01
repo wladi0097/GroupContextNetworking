@@ -23,22 +23,22 @@ SOFTWARE.
 #include "GroupManager.h"
 
 Models::User* GroupManager::joinGroup() {
-    return this->createGroupWithUser();
+    return createGroupWithUser();
 }
 
 Models::User* GroupManager::joinGroup(const std::string &groupId) {
-    Models::Group* group = this->getGroup(groupId);
+    Models::Group* group = getGroup(groupId);
     if (group) {
-        return this->createUser(group);
+        return GroupManager::createUser(group);
     } else {
-        return this->createGroupWithUser();
+        return createGroupWithUser();
     }
 }
 
 Models::Group* GroupManager::getGroup(const std::string &groupId) {
-    for (Models::Group *group : this->groups) {
+    for (std::unique_ptr<Models::Group>& group : groups) {
         if (group->getId() == groupId) {
-            return group;
+            return group.get();
         }
     }
 
@@ -46,25 +46,21 @@ Models::Group* GroupManager::getGroup(const std::string &groupId) {
 }
 
 Models::User* GroupManager::createGroupWithUser() {
-    auto* group = new Models::Group;
-    this->groups.push_back(group);
+    std::unique_ptr<Models::Group> group = std::make_unique<Models::Group>();
+    groups.push_back(std::move(group));
 
-    return this->createUser(group);
+    return createUser(groups.back().get());
 }
 
 void GroupManager::removeGroup(const std::string &groupId) {
-    const int index = this->getGroupIndex(groupId);
+    const int16_t index = getGroupIndex(groupId);
     if (index != -1) {
-        Models::Group* group = this->groups[index];
-        group->removeAllUsers();
-
-        this->groups.erase(this->groups.begin() + index);
-        delete group;
+        groups.erase(groups.begin() + index);
     }
 }
 
-int GroupManager::getGroupIndex(const std::string &groupId) {
-    for (__int16_t i = 0; i < this->groups.size(); ++i) {
+int16_t GroupManager::getGroupIndex(const std::string &groupId) {
+    for (int16_t i = 0; i < groups.size(); ++i) {
         if (groups[i]->getId() == groupId)
             return i;
     }
@@ -72,11 +68,19 @@ int GroupManager::getGroupIndex(const std::string &groupId) {
 }
 
 Models::User *GroupManager::createUser(Models::Group *group) {
-    auto* user = new Models::User(group, true);
-    group->addUser(user);
+    auto* user = group->addUser();
     return user;
 }
 
-std::vector<Models::Group*> GroupManager::getGroups() {
-    return this->groups;
+void GroupManager::leaveGroup(Models::User *user) {
+    auto* groupOfUser = user->getGroup();
+    groupOfUser->removeUser(user->getId());
+
+    if (groupOfUser->getUserSize() == 0) {
+        this->removeGroup(groupOfUser->getId());
+    }
+}
+
+int16_t GroupManager::getGroupSize() {
+    return this->groups.size();
 }

@@ -26,42 +26,40 @@ SOFTWARE.
 using namespace Models;
 
 Group::Group() {
-    this->id = Utils::generateUUID();
+    id = Utils::generateUUID();
 }
 
 Group::~Group() = default;
 
-std::vector<User *> Group::getUsers() {
-    return this->users;
-}
-
 std::string Group::getId() {
-    return this->id;
+    return id;
 }
 
 User *Group::getUser(const std::string &userId) {
-    for (User *user : this->users) {
+    for (std::unique_ptr<User>& user : users) {
         if (user->getId() == userId)
-            return user;
+            return user.get();
     }
     return nullptr;
 }
 
-void Group::addUser(User *user) {
-    this->users.push_back(user);
+User* Group::addUser() {
+    std::unique_ptr<Models::User> user =
+            std::make_unique<Models::User>(this, true);
+    users.push_back(std::move(user));
+
+    return users.back().get();
 }
 
 void Group::removeUser(const std::string &userId) {
-    int index = this->getUserIndex(userId);
+    int index = getUserIndex(userId);
     if (index != -1) {
-        User* user = this->users[index];
-        this->users.erase(this->users.begin() + index);
-        delete user;
+        users.erase(users.begin() + index);
     }
 }
 
 int Group::getUserIndex(const std::string &userId) {
-    for (__int16_t i = 0; i < this->users.size(); ++i) {
+    for (__int16_t i = 0; i < users.size(); ++i) {
         if (users[i]->getId() == userId)
             return i;
     }
@@ -69,19 +67,17 @@ int Group::getUserIndex(const std::string &userId) {
 }
 
 bool Group::hasUser(const std::string &userId) {
-    return this->getUser(userId) != nullptr;
+    return getUser(userId) != nullptr;
 }
 
 bool Group::isUserGroupCreator(const std::string &userId) {
-    User* user = this->getUser(userId);
+    User* user = getUser(userId);
 
     if (user == nullptr) return false;
 
     return user->getIsGroupLeader();
 }
 
-void Group::removeAllUsers() {
-    for (User *user : this->users) {
-        this->removeUser(user->getId());
-    }
+__int16_t Group::getUserSize() {
+    return users.size();
 }

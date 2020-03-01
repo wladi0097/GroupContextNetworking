@@ -27,22 +27,24 @@ SOFTWARE.
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "Group.h"
 #include "User.h"
 
 class GroupManager {
  private:
-    std::vector<Models::Group*> groups;
+    std::vector<std::unique_ptr<Models::Group>> groups;
     Models::User* createGroupWithUser();
-    Models::User* createUser(Models::Group* group);
-    int getGroupIndex(const std::string& groupId);
+    static Models::User* createUser(Models::Group* group);
+    int16_t getGroupIndex(const std::string& groupId);
+    void removeGroup(const std::string& groupId);
 
  public:
     Models::User* joinGroup();
     Models::User* joinGroup(const std::string& groupId);
+    void leaveGroup(Models::User* user);
     Models::Group* getGroup(const std::string& groupId);
-    std::vector<Models::Group*> getGroups();
-    void removeGroup(const std::string& groupId);
+    int16_t getGroupSize();
 };
 
 #endif  // NET_GROUPMANAGER_H

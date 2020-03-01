@@ -37,32 +37,28 @@ TEST_CASE("Group: Constructor") {
 TEST_CASE("Group: Adding User") {
     SECTION("Single User") {
         auto* group = new Group;
-        auto* user = new User(group);
 
-        group->addUser(user);
+        auto user = group->addUser();
 
-        REQUIRE(group->getUsers()[0] == user);
+        REQUIRE(group->getUser(user->getId()) == user);
     }
 
     SECTION("Multiple Users") {
         auto* group = new Group;
-        auto* user1 = new User(group);
-        auto* user2 = new User(group);
 
-        group->addUser(user1);
-        group->addUser(user2);
+        auto* user1 = group->addUser();
+        auto* user2 = group->addUser();
 
-        REQUIRE(group->getUsers()[0] == user1);
-        REQUIRE(group->getUsers()[1] == user2);
+        REQUIRE(group->getUser(user1->getId()) == user1);
+        REQUIRE(group->getUser(user2->getId()) == user2);
     }
 }
 
 TEST_CASE("Group: Getting Users") {
     SECTION("Get by id found") {
         auto* group = new Group;
-        auto* user = new User(group);
 
-        group->addUser(user);
+        auto* user = group->addUser();
 
         REQUIRE(group->getUser(user->getId()) == user);
     }
@@ -75,9 +71,8 @@ TEST_CASE("Group: Getting Users") {
 
     SECTION("Has user true") {
         auto* group = new Group;
-        auto* user = new User(group);
 
-        group->addUser(user);
+        auto* user = group->addUser();
 
         REQUIRE(group->hasUser(user->getId()));
     }
@@ -92,15 +87,14 @@ TEST_CASE("Group: Getting Users") {
 TEST_CASE("Group: Removing Users") {
     SECTION("Remove user also destructor the user") {
         auto* group = new Group;
-        auto* user = new User(group);
 
-        group->addUser(user);
+        auto* user = group->addUser();
 
-        REQUIRE(group->getUsers()[0] == user);
+        REQUIRE(group->getUser(user->getId()) == user);
 
         group->removeUser(user->getId());
 
-        REQUIRE(empty(group->getUsers()));
+        //REQUIRE(empty(group->()));
     }
 
     SECTION("Remove user that doesn't exist is ignored") {

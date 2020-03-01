@@ -38,15 +38,15 @@ User::User(Group* group, bool isGroupLeader) {
 }
 
 std::string User::getId() {
-    return this->id;
+    return id;
 }
 
 Group *User::getGroup() {
-    return this->group;
+    return group;
 }
 
 bool User::getIsGroupLeader() {
-    return this->isGroupLeader;
+    return isGroupLeader;
 }
 
 
