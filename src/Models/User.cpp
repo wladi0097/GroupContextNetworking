@@ -23,29 +23,27 @@ SOFTWARE.
 
 #include "User.h"
 
-using namespace Models;
-
-User::User(Group *group) {
+Models::User::User(Group *group) {
     this->id = Utils::generateUUID();
     this->group = group;
     this->isGroupLeader = false;
 }
 
-User::User(Group *group, bool isGroupLeader) {
+Models::User::User(Group *group, bool isGroupLeader) {
     this->id = Utils::generateUUID();
     this->group = group;
     this->isGroupLeader = isGroupLeader;
 }
 
-std::string User::getId() {
+std::string Models::User::getId() {
     return id;
 }
 
-Group *User::getGroup() {
+Models::Group *Models::User::getGroup() {
     return group;
 }
 
-bool User::getIsGroupLeader() {
+bool Models::User::getIsGroupLeader() {
     return isGroupLeader;
 }
 

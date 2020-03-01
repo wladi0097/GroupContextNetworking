@@ -23,19 +23,17 @@ SOFTWARE.
 
 #include "Group.h"
 
-using namespace Models;
-
-Group::Group() {
+Models::Group::Group() {
     id = Utils::generateUUID();
 }
 
-Group::~Group() = default;
+Models::Group::~Group() = default;
 
-std::string Group::getId() {
+std::string Models::Group::getId() {
     return id;
 }
 
-User *Group::getUser(const std::string &userId) {
+Models::User *Models::Group::getUser(const std::string &userId) {
     for (std::unique_ptr<User> &user : users) {
         if (user->getId() == userId)
             return user.get();
@@ -43,7 +41,7 @@ User *Group::getUser(const std::string &userId) {
     return nullptr;
 }
 
-User *Group::addUser(const bool isCreator) {
+Models::User *Models::Group::addUser(const bool isCreator) {
     std::unique_ptr<Models::User> user =
             std::make_unique<Models::User>(this, isCreator);
     users.push_back(std::move(user));
@@ -51,14 +49,14 @@ User *Group::addUser(const bool isCreator) {
     return users.back().get();
 }
 
-void Group::removeUser(const std::string &userId) {
+void Models::Group::removeUser(const std::string &userId) {
     int index = getUserIndex(userId);
     if (index != -1) {
         users.erase(users.begin() + index);
     }
 }
 
-int Group::getUserIndex(const std::string &userId) {
+int Models::Group::getUserIndex(const std::string &userId) {
     for (__int16_t i = 0; i < users.size(); ++i) {
         if (users[i]->getId() == userId)
             return i;
@@ -66,11 +64,11 @@ int Group::getUserIndex(const std::string &userId) {
     return -1;
 }
 
-bool Group::hasUser(const std::string &userId) {
+bool Models::Group::hasUser(const std::string &userId) {
     return getUser(userId) != nullptr;
 }
 
-bool Group::isUserGroupCreator(const std::string &userId) {
+bool Models::Group::isUserGroupCreator(const std::string &userId) {
     User *user = getUser(userId);
 
     if (user == nullptr) return false;
@@ -78,6 +76,6 @@ bool Group::isUserGroupCreator(const std::string &userId) {
     return user->getIsGroupLeader();
 }
 
-__int16_t Group::getUserSize() {
+__int16_t Models::Group::getUserSize() {
     return users.size();
 }
