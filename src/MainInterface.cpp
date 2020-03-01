@@ -23,7 +23,7 @@ SOFTWARE.
 
 #include "MainInterface.h"
 
-App App::app() {
+App App::get() {
     return App();
 }
 

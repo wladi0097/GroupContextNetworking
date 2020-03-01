@@ -30,7 +30,7 @@ SOFTWARE.
 
 class App {
  public:
-    static App app();
+    static App get();
     App connect(std::function<void(Socket)> &&handler);
     App disconnect(std::function<void(Socket)> &&handler);
     App message(std::string pattern, std::function<void(Socket)> &&handler);

@@ -23,6 +23,7 @@ SOFTWARE.
 
 #define CATCH_CONFIG_MAIN
 #include "../../deps/catch.hpp"
+#include "../../src/MainInterface.h"
 
 TEST_CASE("MainInterface") {
     SECTION("has unique id") {
