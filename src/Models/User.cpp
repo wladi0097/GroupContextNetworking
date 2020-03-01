@@ -31,7 +31,7 @@ User::User(Group *group) {
     this->isGroupLeader = false;
 }
 
-User::User(Group* group, bool isGroupLeader) {
+User::User(Group *group, bool isGroupLeader) {
     this->id = Utils::generateUUID();
     this->group = group;
     this->isGroupLeader = isGroupLeader;

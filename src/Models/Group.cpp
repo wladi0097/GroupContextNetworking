@@ -36,14 +36,14 @@ std::string Group::getId() {
 }
 
 User *Group::getUser(const std::string &userId) {
-    for (std::unique_ptr<User>& user : users) {
+    for (std::unique_ptr<User> &user : users) {
         if (user->getId() == userId)
             return user.get();
     }
     return nullptr;
 }
 
-User* Group::addUser(const bool isCreator) {
+User *Group::addUser(const bool isCreator) {
     std::unique_ptr<Models::User> user =
             std::make_unique<Models::User>(this, isCreator);
     users.push_back(std::move(user));
@@ -71,7 +71,7 @@ bool Group::hasUser(const std::string &userId) {
 }
 
 bool Group::isUserGroupCreator(const std::string &userId) {
-    User* user = getUser(userId);
+    User *user = getUser(userId);
 
     if (user == nullptr) return false;
 
