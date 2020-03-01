@@ -48,6 +48,7 @@ class Group {
     void removeUser(const std::string& userId);
     bool hasUser(const std::string& userId);
     __int16_t getUserSize();
+    void setNextGroupLeader();
     bool isUserGroupCreator(const std::string& userId);
 };
 }  // namespace Models

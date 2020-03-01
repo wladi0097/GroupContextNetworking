@@ -41,6 +41,7 @@ class User {
     explicit User(Group* group);
     std::string getId();
     bool getIsGroupLeader();
+    void setAdGroupLeader();
     Group* getGroup();
 };
 }  // namespace Models

@@ -47,4 +47,8 @@ bool Models::User::getIsGroupLeader() {
     return isGroupLeader;
 }
 
+void Models::User::setAdGroupLeader() {
+    isGroupLeader = true;
+}
+
 

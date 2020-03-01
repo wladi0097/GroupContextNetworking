@@ -52,7 +52,14 @@ Models::User *Models::Group::addUser(const bool isCreator) {
 void Models::Group::removeUser(const std::string &userId) {
     int index = getUserIndex(userId);
     if (index != -1) {
+        Models::User *user = users[index].get();
+        bool wasGroupLeader = user->getIsGroupLeader();
+
         users.erase(users.begin() + index);
+
+        if (wasGroupLeader) {
+            setNextGroupLeader();
+        }
     }
 }
 
@@ -78,4 +85,10 @@ bool Models::Group::isUserGroupCreator(const std::string &userId) {
 
 __int16_t Models::Group::getUserSize() {
     return users.size();
+}
+
+void Models::Group::setNextGroupLeader() {
+    if (getUserSize() > 0) {
+        users.back().get()->setAdGroupLeader();
+    }
 }

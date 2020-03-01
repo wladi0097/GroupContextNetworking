@@ -80,12 +80,16 @@ TEST_CASE("GroupManager: leave") {
         std::unique_ptr<GroupManager> groupManager =
                 std::make_unique<GroupManager>();
         auto *user1 = groupManager->joinGroup();
+        REQUIRE(user1->getIsGroupLeader());
+
         auto *group = user1->getGroup();
         auto *user2 = groupManager->joinGroup(group->getId());
+        REQUIRE(!user2->getIsGroupLeader());
 
         groupManager->leaveGroup(user1);
 
         REQUIRE(group->getUserSize() == 1);
+        REQUIRE(user2->getIsGroupLeader());
     }
 
     SECTION("Last user leaves group, deletes it") {
