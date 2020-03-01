@@ -29,14 +29,16 @@ using namespace Models;
 
 TEST_CASE("Group: Constructor") {
     SECTION("has unique id") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
         REQUIRE(!empty(group->getId()));
     }
 }
 
 TEST_CASE("Group: Adding User") {
     SECTION("Single User") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
 
         auto user = group->addUser();
 
@@ -44,7 +46,8 @@ TEST_CASE("Group: Adding User") {
     }
 
     SECTION("Multiple Users") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
 
         auto* user1 = group->addUser();
         auto* user2 = group->addUser();
@@ -56,7 +59,8 @@ TEST_CASE("Group: Adding User") {
 
 TEST_CASE("Group: Getting Users") {
     SECTION("Get by id found") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
 
         auto* user = group->addUser();
 
@@ -64,13 +68,15 @@ TEST_CASE("Group: Getting Users") {
     }
 
     SECTION("Get by id not found") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
 
         REQUIRE(!group->getUser("random-id"));
     }
 
     SECTION("Has user true") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
 
         auto* user = group->addUser();
 
@@ -78,7 +84,8 @@ TEST_CASE("Group: Getting Users") {
     }
 
     SECTION("Has user false") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
 
         REQUIRE(!group->hasUser("random-id"));
     }
@@ -86,7 +93,8 @@ TEST_CASE("Group: Getting Users") {
 
 TEST_CASE("Group: Removing Users") {
     SECTION("Remove user also destructor the user") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
 
         auto* user = group->addUser();
 
@@ -94,11 +102,12 @@ TEST_CASE("Group: Removing Users") {
 
         group->removeUser(user->getId());
 
-        //REQUIRE(empty(group->()));
+        REQUIRE(group->getUserSize() == 0);
     }
 
     SECTION("Remove user that doesn't exist is ignored") {
-        auto* group = new Group;
+        std::unique_ptr<Group> group =
+                std::make_unique<Group>();
         group->removeUser("random-id");
     }
 }

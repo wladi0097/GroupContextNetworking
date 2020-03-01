@@ -25,8 +25,9 @@ SOFTWARE.
 #include "../../../src/Models/GroupManager.h"
 
 TEST_CASE("GroupManager: join") {
-    SECTION("just joining will create new group with user inside") {
-        auto* groupManager = new GroupManager;
+    SECTION("Just joining will create new group with user inside") {
+        std::unique_ptr<GroupManager> groupManager =
+                std::make_unique<GroupManager>();
         auto* user = groupManager->joinGroup();
         auto* group = user->getGroup();
 
@@ -35,8 +36,9 @@ TEST_CASE("GroupManager: join") {
         REQUIRE(group->getUser(user->getId())->getId() == user->getId());
     }
 
-    SECTION("joining an existing group will create and add a user to that group") {
-        auto* groupManager = new GroupManager;
+    SECTION("Joining an existing group will create and add a user") {
+        std::unique_ptr<GroupManager> groupManager =
+                std::make_unique<GroupManager>();
         auto* user = groupManager->joinGroup();
         auto* group = user->getGroup();
 
@@ -44,8 +46,9 @@ TEST_CASE("GroupManager: join") {
         REQUIRE(group->getUserSize() == 2);
     }
 
-    SECTION("joining a non existent group will create one") {
-        auto* groupManager = new GroupManager;
+    SECTION("Joining a non existent group will create one") {
+        std::unique_ptr<GroupManager> groupManager =
+                std::make_unique<GroupManager>();
         auto* user = groupManager->joinGroup("IDoNotExist");
         auto* group = user->getGroup();
 
@@ -55,8 +58,9 @@ TEST_CASE("GroupManager: join") {
         REQUIRE(group->getUser(user->getId())->getId() == user->getId());
     }
 
-    SECTION("multiple groups can exist") {
-        auto* groupManager = new GroupManager;
+    SECTION("Multiple groups can exist") {
+        std::unique_ptr<GroupManager> groupManager =
+                std::make_unique<GroupManager>();
         auto* user1 = groupManager->joinGroup();
         auto* user2 = groupManager->joinGroup();
         auto* user3 = groupManager->joinGroup();
@@ -71,7 +75,8 @@ TEST_CASE("GroupManager: join") {
 
 TEST_CASE("GroupManager: leave") {
     SECTION("One user leaves group will just remove that one user") {
-        auto* groupManager = new GroupManager;
+        std::unique_ptr<GroupManager> groupManager =
+                std::make_unique<GroupManager>();
         auto* user1 = groupManager->joinGroup();
         auto* group = user1->getGroup();
         auto* user2 = groupManager->joinGroup(group->getId());
@@ -82,7 +87,8 @@ TEST_CASE("GroupManager: leave") {
     }
 
     SECTION("Last user leaves group, deletes it") {
-        auto* groupManager = new GroupManager;
+        std::unique_ptr<GroupManager> groupManager =
+                std::make_unique<GroupManager>();
         auto* user = groupManager->joinGroup();
         auto* group = user->getGroup();
 
