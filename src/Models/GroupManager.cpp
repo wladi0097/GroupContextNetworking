@@ -29,8 +29,7 @@ Models::User* GroupManager::joinGroup() {
 Models::User* GroupManager::joinGroup(const std::string &groupId) {
     Models::Group* group = this->getGroup(groupId);
     if (group) {
-        auto* user = new Models::User(group);
-        return user;
+        return this->createUser(group);
     } else {
         return this->createGroupWithUser();
     }
@@ -50,8 +49,7 @@ Models::User* GroupManager::createGroupWithUser() {
     auto* group = new Models::Group;
     this->groups.push_back(group);
 
-    auto* user = new Models::User(group, true);
-    return user;
+    return this->createUser(group);
 }
 
 void GroupManager::removeGroup(const std::string &groupId) {
@@ -71,4 +69,14 @@ int GroupManager::getGroupIndex(const std::string &groupId) {
             return i;
     }
     return -1;
+}
+
+Models::User *GroupManager::createUser(Models::Group *group) {
+    auto* user = new Models::User(group, true);
+    group->addUser(user);
+    return user;
+}
+
+std::vector<Models::Group*> GroupManager::getGroups() {
+    return this->groups;
 }

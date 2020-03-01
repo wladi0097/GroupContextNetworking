@@ -34,12 +34,14 @@ class GroupManager {
  private:
     std::vector<Models::Group*> groups;
     Models::User* createGroupWithUser();
+    Models::User* createUser(Models::Group* group);
     int getGroupIndex(const std::string& groupId);
 
  public:
     Models::User* joinGroup();
     Models::User* joinGroup(const std::string& groupId);
     Models::Group* getGroup(const std::string& groupId);
+    std::vector<Models::Group*> getGroups();
     void removeGroup(const std::string& groupId);
 };
 

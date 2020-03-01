@@ -27,14 +27,14 @@ SOFTWARE.
 
 using namespace Models;
 
-TEST_CASE("group Constructor") {
+TEST_CASE("Group: Constructor") {
     SECTION("has unique id") {
         auto* group = new Group;
         REQUIRE(!empty(group->getId()));
     }
 }
 
-TEST_CASE("Adding User") {
+TEST_CASE("Group: Adding User") {
     SECTION("Single User") {
         auto* group = new Group;
         auto* user = new User(group);
@@ -57,7 +57,7 @@ TEST_CASE("Adding User") {
     }
 }
 
-TEST_CASE("Getting Users") {
+TEST_CASE("Group: Getting Users") {
     SECTION("Get by id found") {
         auto* group = new Group;
         auto* user = new User(group);
@@ -89,7 +89,7 @@ TEST_CASE("Getting Users") {
     }
 }
 
-TEST_CASE("Removing Users") {
+TEST_CASE("Group: Removing Users") {
     SECTION("Remove user also destructor the user") {
         auto* group = new Group;
         auto* user = new User(group);
