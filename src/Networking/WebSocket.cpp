@@ -22,44 +22,43 @@ SOFTWARE.
 */
 
 
+#include <GroupManager.h>
+#include <User.h>
 #include "WebSocket.h"
 #include "../../deps/uWebSockets/src/App.h"
 
 struct us_listen_socket_t *listen_socket;
 
 void WebSocket::init() {
-    struct PerSocketData {
+    std::unique_ptr<GroupManager> gm = std::make_unique<GroupManager>();
 
+    struct UserData {
+        Models::User* user;
     };
 
-    uWS::App().ws<PerSocketData>("/*", {
+    uWS::App().ws<UserData>("/*", {
             .compression = uWS::SHARED_COMPRESSOR,
             .maxPayloadLength = 16 * 1024 * 1024,
             .idleTimeout = 100,
             .maxBackpressure = 1 * 1024 * 1204,
-            .open = [](auto* ws, auto* req) {
-                ws->subscribe("broadcast");
+            .open = [&gm](auto* ws, auto* req) {
                 std::basic_string_view<char> a = req->getUrl();
 
-                if (a.compare("/new")) {
-
+                if (a == "/new") {
+                    Models::User* newUser = gm->joinGroup();
+                    UserData* bigDickPower = static_cast<UserData*>(ws->getUserData());
+                    bigDickPower->user = newUser;
                 }
-
-                if(a.compare("/join")) {
-
-                }
-                int avs = 2;
             },
             .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
                 /* Exit gracefully if we get a closedown message (ASAN debug) */
                 if (message == "closedown") {
-                    /* Bye bye */
-                    us_listen_socket_close(0, listen_socket);
-                    ws->close();
+                    UserData* bigDickPower = static_cast<UserData*>(ws->getUserData());
+                    ws->send(bigDickPower->user->getId());
+//                    /* Bye bye */
+//                    us_listen_socket_close(0, listen_socket);
+//                    ws->close();
                 }
-
-                /* Simply broadcast every single message we get */
-                ws->publish("broadcast", message, opCode, true);
             },
     }).listen(9001, [](auto *token) {
         listen_socket = token;

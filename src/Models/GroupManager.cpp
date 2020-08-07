@@ -21,8 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "GroupManager.h"
-#include "Group.h"
-#include "User.h"
+
 
 Models::User *GroupManager::joinGroup() {
     return createGroupWithUser();

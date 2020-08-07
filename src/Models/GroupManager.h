@@ -26,11 +26,8 @@ SOFTWARE.
 #include <vector>
 #include <string>
 #include <memory>
-
-namespace Models {
-    class User;
-    class Group;
-}
+#include "Group.h"
+#include "User.h"
 
 class GroupManager {
  private:

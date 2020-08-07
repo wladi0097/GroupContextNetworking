@@ -5,67 +5,50 @@
     <title>Daddy</title>
 </head>
 <body>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
-    var wsUri = "ws://localhost:9001/group";
-    var output;
 
-    function init()
-    {
-        output = document.getElementById("output");
+
+    class websocketConnection {
+        constructor(id, path) {
+            this.id = id;
+            this.wsUri = "ws://localhost:9001/" + path;
+            this.testWebSocket()
+        }
+
+        testWebSocket() {
+            this.websocket = new WebSocket(this.wsUri);
+            this.websocket.onopen = this.onOpen.bind(this);
+            this.websocket.onclose = this.onClose.bind(this);
+            this.websocket.onmessage = this.onMessage.bind(this);
+            this.websocket.onerror = this.onError.bind(this);
+        }
+
+        onOpen(evt) {
+            console.log('connected', this.id, evt);
+        }
+
+        onClose(evt) {
+            console.log('disconected', this.id);
+        }
+
+        onMessage(evt) {
+            console.log('getMessage', this.id, evt.data.text())
+        }
+
+        onError(evt) {
+            console.log('getMessage', this.id, evt.data);
+        }
+
+        doSend(message) {
+            console.log('sending', this.id, message)
+            this.websocket.send(message);
+        }
     }
 
-    function testWebSocket()
-    {
-        websocket = new WebSocket(wsUri);
-        websocket.onopen = function(evt) { onOpen(evt) };
-        websocket.onclose = function(evt) { onClose(evt) };
-        websocket.onmessage = function(evt) { onMessage(evt) };
-        websocket.onerror = function(evt) { onError(evt) };
-    }
 
-    function onOpen(evt)
-    {
-        writeToScreen("CONNECTED");
-        doSend("WebSocket rocks");
-    }
 
-    function onClose(evt)
-    {
-        writeToScreen("DISCONNECTED");
-    }
-
-    function onMessage(evt)
-    {
-        writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
-        websocket.close();
-    }
-
-    function onError(evt)
-    {
-        writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
-    }
-
-    function doSend(message)
-    {
-        writeToScreen("SENT: " + message);
-        websocket.send(message);
-    }
-
-    function writeToScreen(message)
-    {
-        var pre = document.createElement("p");
-        pre.style.wordWrap = "break-word";
-        pre.innerHTML = message;
-        output.appendChild(pre);
-    }
-
-    window.addEventListener("load", init, false);
-
+    window.main = new websocketConnection('main', 'new');
 </script>
-
-<h2>WebSocket Test</h2>
-
-<div id="output"></div>
 </body>
 </html>
