@@ -20,10 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
-
-#ifndef SRC_MODELS_GROUP_H_
-#define SRC_MODELS_GROUP_H_
+#pragma once
 
 #include <vector>
 #include <string>
@@ -52,5 +49,3 @@ class Group {
     bool isUserGroupCreator(const std::string& userId);
 };
 }  // namespace Models
-
-#endif  // SRC_MODELS_GROUP_H_

@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include <functional>
 #include <string>
-#include "Socket.h"
+#include "Networking/Socket.h"
 
 class App {
  public:

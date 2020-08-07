@@ -21,15 +21,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SRC_MODELS_GROUPMANAGER_H_
-#define SRC_MODELS_GROUPMANAGER_H_
-
+#pragma once
 
 #include <vector>
 #include <string>
 #include <memory>
-#include "Group.h"
-#include "User.h"
+
+namespace Models {
+    class User;
+    class Group;
+}
 
 class GroupManager {
  private:
@@ -46,5 +47,3 @@ class GroupManager {
     Models::Group* getGroup(const std::string& groupId);
     int16_t getGroupSize();
 };
-
-#endif  // SRC_MODELS_GROUPMANAGER_H_

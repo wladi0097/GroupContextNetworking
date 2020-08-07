@@ -21,8 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SRC_MODELS_USER_H_
-#define SRC_MODELS_USER_H_
+#pragma once
 
 #include <string>
 #include "../Utils/UUID.h"
@@ -45,5 +44,3 @@ class User {
     Group* getGroup();
 };
 }  // namespace Models
-
-#endif  // SRC_MODELS_USER_H_
