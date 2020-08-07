@@ -21,9 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SRC_MODELS_SOCKET_H_
-#define SRC_MODELS_SOCKET_H_
-
+#pragma once
 
 #include "User.h"
 #include "Group.h"
@@ -38,4 +36,3 @@ class Socket {
 };
 
 
-#endif  // SRC_MODELS_SOCKET_H_
