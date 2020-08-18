@@ -3,17 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Daddy</title>
+    <style>
+        body {
+            background-color: #000;
+        }
+
+        h1 {
+            color: #333;
+        }
+    </style>
 </head>
 <body>
 <script type="text/javascript">
 
 
 
-    class websocketConnection {
+    class ws {
         constructor(id, path) {
             this.id = id;
             this.wsUri = "ws://localhost:9001/" + path;
             this.testWebSocket()
+            window[id] = this;
         }
 
         testWebSocket() {
@@ -29,7 +39,7 @@
         }
 
         onClose(evt) {
-            console.log('disconected', this.id);
+            console.log('disconected', this.id, evt);
         }
 
         onMessage(evt) {
@@ -48,7 +58,9 @@
 
 
 
-    window.main = new websocketConnection('main', 'new');
+    new ws('main', 'new');
+    // window.main = new websocketConnection('main', '11111');
 </script>
+<h1>the console</h1>
 </body>
 </html>

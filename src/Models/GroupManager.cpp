@@ -23,17 +23,12 @@ SOFTWARE.
 #include "GroupManager.h"
 
 
-Models::User *GroupManager::joinGroup() {
+Models::User *GroupManager::createGroup() {
     return createGroupWithUser();
 }
 
-Models::User *GroupManager::joinGroup(const std::string &groupId) {
-    Models::Group *group = getGroup(groupId);
-    if (group) {
-        return GroupManager::createUser(group, false);
-    } else {
-        return createGroupWithUser();
-    }
+Models::User *GroupManager::joinGroup(Models::Group* group) {
+    return GroupManager::createUser(group, false);
 }
 
 Models::Group *GroupManager::getGroup(const std::string &groupId) {
@@ -83,8 +78,4 @@ void GroupManager::leaveGroup(Models::User *user) {
     if (groupOfUser->getUserSize() == 0) {
         this->removeGroup(groupOfUser->getId());
     }
-}
-
-int16_t GroupManager::getGroupSize() {
-    return this->groups.size();
 }

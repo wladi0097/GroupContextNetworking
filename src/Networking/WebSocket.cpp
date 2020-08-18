@@ -27,13 +27,39 @@ SOFTWARE.
 #include "WebSocket.h"
 #include "../../deps/uWebSockets/src/App.h"
 
-struct us_listen_socket_t *listen_socket;
-
 void WebSocket::init() {
     std::unique_ptr<GroupManager> gm = std::make_unique<GroupManager>();
 
     struct UserData {
-        Models::User* user;
+        Models::User *user;
+    };
+
+    auto open = [&gm](auto *ws, auto *req) {
+        auto url = req->getUrl();
+
+        if (url == "/new") {
+            Models::User* newUser = gm->createGroup();
+            static_cast<UserData *>(ws->getUserData())->user = newUser;
+            return;
+        }
+
+        if (url.length() == 5) {
+            Models::Group *group = gm->getGroup(std::string(req->getUrl()));
+            if (group != nullptr) {
+                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group);
+                return;
+            }
+        }
+
+        ws->end(5, "Unsupported Open request");
+    };
+
+    auto message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
+        auto *userdata = static_cast<UserData *>(ws->getUserData());
+        if (userdata->user == nullptr) {
+            ws->end(2, "err: unknown user");
+            return;
+        }
     };
 
     uWS::App().ws<UserData>("/*", {
@@ -41,27 +67,9 @@ void WebSocket::init() {
             .maxPayloadLength = 16 * 1024 * 1024,
             .idleTimeout = 100,
             .maxBackpressure = 1 * 1024 * 1204,
-            .open = [&gm](auto* ws, auto* req) {
-                std::basic_string_view<char> a = req->getUrl();
-
-                if (a == "/new") {
-                    Models::User* newUser = gm->joinGroup();
-                    UserData* bigDickPower = static_cast<UserData*>(ws->getUserData());
-                    bigDickPower->user = newUser;
-                }
-            },
-            .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
-                /* Exit gracefully if we get a closedown message (ASAN debug) */
-                if (message == "closedown") {
-                    UserData* bigDickPower = static_cast<UserData*>(ws->getUserData());
-                    ws->send(bigDickPower->user->getId());
-//                    /* Bye bye */
-//                    us_listen_socket_close(0, listen_socket);
-//                    ws->close();
-                }
-            },
+            .open = open,
+            .message = message
     }).listen(9001, [](auto *token) {
-        listen_socket = token;
         if (token) {
             std::cout << "Listening on port " << 9001 << std::endl;
         }

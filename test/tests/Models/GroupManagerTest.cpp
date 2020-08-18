@@ -28,7 +28,7 @@ TEST_CASE("GroupManager: join") {
     SECTION("Just joining will create new group with user inside") {
         std::unique_ptr<GroupManager> groupManager =
                 std::make_unique<GroupManager>();
-        auto *user = groupManager->joinGroup();
+        auto *user = groupManager->createGroup();
         auto *group = user->getGroup();
 
         REQUIRE(!user->getId().empty());
@@ -39,7 +39,7 @@ TEST_CASE("GroupManager: join") {
     SECTION("Joining an existing group will create and add a user") {
         std::unique_ptr<GroupManager> groupManager =
                 std::make_unique<GroupManager>();
-        auto *user1 = groupManager->joinGroup();
+        auto *user1 = groupManager->createGroup();
         auto *group = user1->getGroup();
         auto *user2 = groupManager->joinGroup(group->getId());
 
@@ -63,9 +63,9 @@ TEST_CASE("GroupManager: join") {
     SECTION("Multiple groups can exist") {
         std::unique_ptr<GroupManager> groupManager =
                 std::make_unique<GroupManager>();
-        auto *user1 = groupManager->joinGroup();
-        auto *user2 = groupManager->joinGroup();
-        auto *user3 = groupManager->joinGroup();
+        auto *user1 = groupManager->createGroup();
+        auto *user2 = groupManager->createGroup();
+        auto *user3 = groupManager->createGroup();
 
         REQUIRE(user1->getId() != user2->getId());
         REQUIRE(user2->getId() != user3->getId());
@@ -79,7 +79,7 @@ TEST_CASE("GroupManager: leave") {
     SECTION("One user leaves group will just remove that one user") {
         std::unique_ptr<GroupManager> groupManager =
                 std::make_unique<GroupManager>();
-        auto *user1 = groupManager->joinGroup();
+        auto *user1 = groupManager->createGroup();
         REQUIRE(user1->getIsGroupLeader());
 
         auto *group = user1->getGroup();
@@ -95,7 +95,7 @@ TEST_CASE("GroupManager: leave") {
     SECTION("Last user leaves group, deletes it") {
         std::unique_ptr<GroupManager> groupManager =
                 std::make_unique<GroupManager>();
-        auto *user = groupManager->joinGroup();
+        auto *user = groupManager->createGroup();
         auto *group = user->getGroup();
 
         groupManager->leaveGroup(user);

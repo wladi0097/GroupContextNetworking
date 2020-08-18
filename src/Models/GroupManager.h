@@ -38,9 +38,8 @@ class GroupManager {
     void removeGroup(const std::string& groupId);
 
  public:
-    Models::User* joinGroup();
-    Models::User* joinGroup(const std::string& groupId);
+    Models::User* createGroup();
+    Models::User* joinGroup(Models::Group* group);
     void leaveGroup(Models::User* user);
     Models::Group* getGroup(const std::string& groupId);
-    int16_t getGroupSize();
 };
