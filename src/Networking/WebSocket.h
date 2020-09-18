@@ -3,10 +3,8 @@
 //
 #pragma once
 
-
-
 class WebSocket {
- public:
+public:
     static void init();
 };
 

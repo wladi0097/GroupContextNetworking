@@ -24,23 +24,30 @@ SOFTWARE.
 #pragma once
 
 #include <string>
-#include "../Utils/UUID.h"
+#include "../../deps/uWebSockets/src/App.h"
+#include "MessageType.h"
 
 namespace Models {
-class Group;
+    class Group;
 
-class User {
- private:
-    std::string id;
-    bool isGroupLeader;
-    Group* group;
+    class User {
+    private:
+        std::string id;
+        bool isGroupLeader;
+        Group *group;
+        uWS::WebSocket<false, true> *userWebsocket;
 
- public:
-    explicit User(Group* group, bool isGroupLeader);
-    explicit User(Group* group);
-    std::string getId();
-    bool getIsGroupLeader();
-    void setAdGroupLeader();
-    Group* getGroup();
-};
+    public:
+        explicit User(Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isGroupLeader);
+
+        std::string getId();
+
+        bool getIsGroupLeader();
+
+        void handleMessage(std::string_view message);
+
+        void send(MessageType type, std::string_view message);
+
+        void leave();
+    };
 }  // namespace Models

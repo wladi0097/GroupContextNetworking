@@ -23,23 +23,26 @@ SOFTWARE.
 
 #pragma once
 
-#include <vector>
 #include <string>
-#include <memory>
 #include "Group.h"
 #include "User.h"
+#include "../../deps/uWebSockets/src/App.h"
+#include "MessageType.h"
 
 class GroupManager {
- private:
+private:
     std::vector<std::unique_ptr<Models::Group>> groups;
-    Models::User* createGroupWithUser();
-    static Models::User* createUser(Models::Group* group, bool isCreator);
-    int16_t getGroupIndex(const std::string& groupId);
-    void removeGroup(const std::string& groupId);
 
- public:
-    Models::User* createGroup();
-    Models::User* joinGroup(Models::Group* group);
-    void leaveGroup(Models::User* user);
-    Models::Group* getGroup(const std::string& groupId);
+    int16_t getGroupIndex(const std::string &groupId);
+
+    void removeGroup(const std::string &groupId);
+
+public:
+    Models::User *joinNewGroup(uWS::WebSocket<false, true> *userWebsocket);
+
+    Models::User *joinGroup(Models::Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isHost);
+
+    void leaveGroup(Models::User *user);
+
+    Models::Group *getGroup(const std::string &groupId);
 };

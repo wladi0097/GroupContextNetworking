@@ -21,14 +21,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "GroupManager.h"
+#include <vector>
+#include <memory>
 
 
-Models::User *GroupManager::createGroup() {
-    return createGroupWithUser();
+Models::User *GroupManager::joinNewGroup(uWS::WebSocket<false, true> *userWebsocket) {
+    std::unique_ptr<Models::Group> group = std::make_unique<Models::Group>(userWebsocket);
+    groups.push_back(std::move(group));
+    Models::Group *newGroup = groups.back().get();
+
+    return newGroup->getHost();
 }
 
-Models::User *GroupManager::joinGroup(Models::Group* group) {
-    return GroupManager::createUser(group, false);
+Models::User *
+GroupManager::joinGroup(Models::Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isHost = false) {
+    auto *user = group->addUser(userWebsocket, isHost);
+    group->getHost()->send(MessageType::newUser ,user->getId());
+    return user;
 }
 
 Models::Group *GroupManager::getGroup(const std::string &groupId) {
@@ -41,11 +50,12 @@ Models::Group *GroupManager::getGroup(const std::string &groupId) {
     return nullptr;
 }
 
-Models::User *GroupManager::createGroupWithUser() {
-    std::unique_ptr<Models::Group> group = std::make_unique<Models::Group>();
-    groups.push_back(std::move(group));
-
-    return createUser(groups.back().get(), true);
+void GroupManager::leaveGroup(Models::User *user) {
+    if (user->getIsGroupLeader()) {
+        this->removeGroup();
+    } else {
+        user->leave();
+    }
 }
 
 void GroupManager::removeGroup(const std::string &groupId) {
@@ -61,21 +71,4 @@ int16_t GroupManager::getGroupIndex(const std::string &groupId) {
             return i;
     }
     return -1;
-}
-
-Models::User *GroupManager::createUser(
-        Models::Group *group,
-        const bool isCreator
-) {
-    auto *user = group->addUser(isCreator);
-    return user;
-}
-
-void GroupManager::leaveGroup(Models::User *user) {
-    auto *groupOfUser = user->getGroup();
-    groupOfUser->removeUser(user->getId());
-
-    if (groupOfUser->getUserSize() == 0) {
-        this->removeGroup(groupOfUser->getId());
-    }
 }

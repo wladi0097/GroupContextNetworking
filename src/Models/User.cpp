@@ -22,33 +22,42 @@ SOFTWARE.
 */
 
 #include "User.h"
+#include "Group.h"
+#include "../Utils/UUID.h"
+#include <iostream>
 
-Models::User::User(Group *group) {
-    this->id = Utils::generateUUID();
-    this->group = group;
-    this->isGroupLeader = false;
+Models::User::User(Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isGroupLeader)
+        : id(Utils::generateUUID()), group(group), userWebsocket(userWebsocket), isGroupLeader(isGroupLeader) {}
+
+std::string Models::User::getId() { return id; }
+
+bool Models::User::getIsGroupLeader() { return isGroupLeader; }
+
+void Models::User::handleMessage(std::string_view message) {
+    if(this->getIsGroupLeader()) {
+        switch ((int)message[0] - '0') {
+            case MessageType::HostToSingleUser: {
+                Models::User *user = this->group->getUser(message.substr(1, 23));
+                if(user != nullptr) {
+                    user->send(MessageType::HostToSingleUser, message);
+                }
+                break;
+            }
+            case MessageType::HostToAllUser:
+                this->group->sendToAll(message);
+                break;
+        }
+    } else {
+        this->group->getHost()->send(MessageType::UserToHost, message);
+    }
 }
 
-Models::User::User(Group *group, bool isGroupLeader) {
-    this->id = Utils::generateUUID();
-    this->group = group;
-    this->isGroupLeader = isGroupLeader;
+void Models::User::send(MessageType type, std::string_view message) {
+    std::string messageString(message);
+    this->userWebsocket->send(std::to_string(type) + messageString);
 }
 
-std::string Models::User::getId() {
-    return id;
+void Models::User::leave() {
+    this->userWebsocket->end(3, "closed by host");
+    this->group->removeUser(this->id);
 }
-
-Models::Group *Models::User::getGroup() {
-    return group;
-}
-
-bool Models::User::getIsGroupLeader() {
-    return isGroupLeader;
-}
-
-void Models::User::setAdGroupLeader() {
-    isGroupLeader = true;
-}
-
-

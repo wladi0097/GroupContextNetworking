@@ -22,10 +22,12 @@ SOFTWARE.
 */
 
 
-#include <GroupManager.h>
-#include <User.h>
+
 #include "WebSocket.h"
 #include "../../deps/uWebSockets/src/App.h"
+#include <GroupManager.h>
+#include <User.h>
+
 
 void WebSocket::init() {
     std::unique_ptr<GroupManager> gm = std::make_unique<GroupManager>();
@@ -34,19 +36,19 @@ void WebSocket::init() {
         Models::User *user;
     };
 
-    auto open = [&gm](auto *ws, auto *req) {
+    auto open = [&gm](uWS::WebSocket<false, true> *ws, uWS::HttpRequest *req) {
         auto url = req->getUrl();
 
         if (url == "/new") {
-            Models::User* newUser = gm->createGroup();
+            Models::User *newUser = gm->joinNewGroup(ws);
             static_cast<UserData *>(ws->getUserData())->user = newUser;
             return;
         }
 
         if (url.length() == 5) {
-            Models::Group *group = gm->getGroup(std::string(req->getUrl()));
+            Models::Group *group = gm->getGroup(std::string(url).erase(0, 1));
             if (group != nullptr) {
-                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group);
+                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group, ws, false);
                 return;
             }
         }
@@ -55,17 +57,27 @@ void WebSocket::init() {
     };
 
     auto message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
-        auto *userdata = static_cast<UserData *>(ws->getUserData());
-        if (userdata->user == nullptr) {
+        auto *userData = static_cast<UserData *>(ws->getUserData());
+        if (userData->user == nullptr) {
             ws->end(2, "err: unknown user");
             return;
         }
+        userData->user->handleMessage(message);
+    };
+
+    auto close = [&gm](auto *ws, int code, std::string_view message) {
+        auto *userData = static_cast<UserData *>(ws->getUserData());
+        if (userData->user == nullptr) {
+            ws->end(2, "err: unknown user");
+            return;
+        }
+        gm->leaveGroup(userData->user);
     };
 
     uWS::App().ws<UserData>("/*", {
             .compression = uWS::SHARED_COMPRESSOR,
             .maxPayloadLength = 16 * 1024 * 1024,
-            .idleTimeout = 100,
+            .idleTimeout = 1000,
             .maxBackpressure = 1 * 1024 * 1204,
             .open = open,
             .message = message

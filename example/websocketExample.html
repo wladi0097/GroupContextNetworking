@@ -18,7 +18,7 @@
 
 
 
-    class ws {
+    class wss {
         constructor(id, path) {
             this.id = id;
             this.wsUri = "ws://localhost:9001/" + path;
@@ -56,9 +56,11 @@
         }
     }
 
+    function ws(id, path) {
+        return new wss(id, path)
+    }
 
-
-    new ws('main', 'new');
+    ws('main', 'new');
     // window.main = new websocketConnection('main', '11111');
 </script>
 <h1>the console</h1>

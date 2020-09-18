@@ -22,18 +22,24 @@ SOFTWARE.
 */
 
 #include "Group.h"
+#include <memory>
+#include <vector>
+#include "../Utils/UUID.h"
 
-Models::Group::Group() {
-    id = Utils::generateUUID();
+Models::Group::Group(uWS::WebSocket<false, true> *userWebsocket) {
+    this->id = "AAAA"; // Utils::generateUUID()
+    this->host = std::make_unique<Models::User>(this, userWebsocket, true);
 }
-
-Models::Group::~Group() = default;
 
 std::string Models::Group::getId() {
     return id;
 }
 
-Models::User *Models::Group::getUser(const std::string &userId) {
+Models::User *Models::Group::getHost() {
+    return this->host.get();
+}
+
+Models::User *Models::Group::getUser(const std::string_view &userId) {
     for (std::unique_ptr<User> &user : users) {
         if (user->getId() == userId)
             return user.get();
@@ -41,26 +47,21 @@ Models::User *Models::Group::getUser(const std::string &userId) {
     return nullptr;
 }
 
-Models::User *Models::Group::addUser(const bool isCreator) {
+Models::User *Models::Group::addUser(uWS::WebSocket<false, true> *userWebsocket, const bool isCreator) {
     std::unique_ptr<Models::User> user =
-            std::make_unique<Models::User>(this, isCreator);
+            std::make_unique<Models::User>(this, userWebsocket, isCreator);
     users.push_back(std::move(user));
-
     return users.back().get();
 }
 
 void Models::Group::removeUser(const std::string &userId) {
     int index = getUserIndex(userId);
-    if (index != -1) {
-        Models::User *user = users[index].get();
-        bool wasGroupLeader = user->getIsGroupLeader();
-
-        users.erase(users.begin() + index);
-
-        if (wasGroupLeader) {
-            setNextGroupLeader();
-        }
-    }
+//    if (index != -1) {
+//        Models::User *user = users[index].get();
+//        bool wasGroupLeader = user->getIsGroupLeader();
+//
+//        users.erase(users.begin() + index);
+//    }
 }
 
 int Models::Group::getUserIndex(const std::string &userId) {
@@ -71,24 +72,8 @@ int Models::Group::getUserIndex(const std::string &userId) {
     return -1;
 }
 
-bool Models::Group::hasUser(const std::string &userId) {
-    return getUser(userId) != nullptr;
-}
-
-bool Models::Group::isUserGroupCreator(const std::string &userId) {
-    User *user = getUser(userId);
-
-    if (user == nullptr) return false;
-
-    return user->getIsGroupLeader();
-}
-
-__int16_t Models::Group::getUserSize() {
-    return users.size();
-}
-
-void Models::Group::setNextGroupLeader() {
-    if (getUserSize() > 0) {
-        users.back().get()->setAdGroupLeader();
+void Models::Group::sendToAll(std::string_view message) {
+    for (auto &user: this->users) {
+        user->send(MessageType::HostToAllUser, message);
     }
 }

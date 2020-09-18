@@ -22,30 +22,33 @@ SOFTWARE.
 */
 #pragma once
 
-#include <vector>
-#include <string>
-#include <memory>
 
+#include <string>
 #include "User.h"
-#include "../Utils/UUID.h"
+#include "../../deps/uWebSockets/src/App.h"
 
 namespace Models {
-class Group {
- private:
-    std::vector<std::unique_ptr<User>> users;
-    std::string id;
-    int getUserIndex(const std::string& id);
+    class Group {
+    private:
+        std::vector<std::unique_ptr<User>> users;
+        std::unique_ptr<Models::User> host;
+        std::string id;
 
- public:
-    Group();
-    ~Group();
-    std::string getId();
-    User* getUser(const std::string& userId);
-    User* addUser(bool isCreator);
-    void removeUser(const std::string& userId);
-    bool hasUser(const std::string& userId);
-    __int16_t getUserSize();
-    void setNextGroupLeader();
-    bool isUserGroupCreator(const std::string& userId);
-};
+        int getUserIndex(const std::string &id);
+
+    public:
+        explicit Group(uWS::WebSocket<false, true> *userWebsocket);
+
+        std::string getId();
+
+        User *getHost();
+
+        User *getUser(const std::string_view &userId);
+
+        User *addUser(uWS::WebSocket<false, true> *userWebsocket, bool isCreator);
+
+        void removeUser(const std::string &userId);
+
+        void sendToAll(std::string_view message);
+    };
 }  // namespace Models
