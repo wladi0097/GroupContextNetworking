@@ -52,7 +52,7 @@ Models::Group *GroupManager::getGroup(const std::string &groupId) {
 
 void GroupManager::leaveGroup(Models::User *user) {
     if (user->getIsGroupLeader()) {
-        this->removeGroup();
+//        this->removeGroup(user->);
     } else {
         user->leave();
     }
@@ -66,7 +66,7 @@ void GroupManager::removeGroup(const std::string &groupId) {
 }
 
 int16_t GroupManager::getGroupIndex(const std::string &groupId) {
-    for (int16_t i = 0; i < groups.size(); ++i) {
+    for (unsigned long i = 0; i < groups.size(); ++i) {
         if (groups[i]->getId() == groupId)
             return i;
     }

@@ -24,14 +24,13 @@ SOFTWARE.
 #include "User.h"
 #include "Group.h"
 #include "../Utils/UUID.h"
-#include <iostream>
 
 Models::User::User(Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isGroupLeader)
         : id(Utils::generateUUID()), group(group), userWebsocket(userWebsocket), isGroupLeader(isGroupLeader) {}
 
 std::string Models::User::getId() { return id; }
 
-bool Models::User::getIsGroupLeader() { return isGroupLeader; }
+bool Models::User::getIsGroupLeader() const { return isGroupLeader; }
 
 void Models::User::handleMessage(std::string_view message) {
     if(this->getIsGroupLeader()) {

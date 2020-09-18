@@ -40,7 +40,7 @@ private:
 public:
     Models::User *joinNewGroup(uWS::WebSocket<false, true> *userWebsocket);
 
-    Models::User *joinGroup(Models::Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isHost);
+    static Models::User *joinGroup(Models::Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isHost);
 
     void leaveGroup(Models::User *user);
 

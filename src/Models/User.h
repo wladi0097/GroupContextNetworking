@@ -42,7 +42,7 @@ namespace Models {
 
         std::string getId();
 
-        bool getIsGroupLeader();
+        bool getIsGroupLeader() const;
 
         void handleMessage(std::string_view message);
 
