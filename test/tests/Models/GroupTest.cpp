@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "../../../deps/catch.hpp"
+#include "../../../deps/Catch2/include/catch.hpp"
 #include "User.h"
 #include "Group.h"
 
