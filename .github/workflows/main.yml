@@ -9,7 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      submodules: recursive
+      with:
+        submodules: recursive
     - name: install valgrind
       run: sudo apt-get install valgrind
     - name: install new version of cmake
