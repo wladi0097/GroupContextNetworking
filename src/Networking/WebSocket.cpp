@@ -33,28 +33,40 @@ void WebSocket::init() {
     std::unique_ptr<GroupManager> gm = std::make_unique<GroupManager>();
 
     struct UserData {
+        std::string_view path;
         Models::User *user;
     };
 
-//    auto open = [&gm](uWS::WebSocket<false, true> *ws) {
-//        auto url = req->getUrl();
-//
-//        if (url == "/new") {
-//            Models::User *newUser = gm->joinNewGroup(ws);
-//            static_cast<UserData *>(ws->getUserData())->user = newUser;
-//            return;
-//        }
-//
-//        if (url.length() == 5) {
-//            Models::Group *group = gm->getGroup(std::string(url).erase(0, 1));
-//            if (group != nullptr) {
-//                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group, ws, false);
-//                return;
-//            }
-//        }
-//
-//        ws->end(5, "Unsupported Open request");
-//    };
+    auto upgrade = [](auto *res, auto *req, auto *context) {
+        auto url = req->getUrl();
+        res->template upgrade<UserData>(
+                {.path = url},
+                req->getHeader("sec-websocket-key"),
+                req->getHeader("sec-websocket-protocol"),
+                req->getHeader("sec-websocket-extensions"),
+                context
+        );
+    };
+
+    auto open = [&gm](uWS::WebSocket<false, true> *ws) {
+        auto url = static_cast<UserData *>(ws->getUserData())->path;
+
+        if (url == "/new") {
+            Models::User *newUser = gm->joinNewGroup(ws);
+            static_cast<UserData *>(ws->getUserData())->user = newUser;
+            return;
+        }
+
+        if (url.length() == 5) {
+            Models::Group *group = gm->getGroup(std::string(url).erase(0, 1));
+            if (group != nullptr) {
+                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group, ws, false);
+                return;
+            }
+        }
+
+        ws->end(5, "Unsupported Open request");
+    };
 
     auto message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
         auto *userData = static_cast<UserData *>(ws->getUserData());
@@ -79,8 +91,10 @@ void WebSocket::init() {
             .maxPayloadLength = 16 * 1024 * 1024,
             .idleTimeout = 1000,
             .maxBackpressure = 1 * 1024 * 1204,
-//            .open = open,
-            .message = message
+            .upgrade = upgrade,
+            .open = open,
+            .message = message,
+            .close = close
     }).listen(9001, [](auto *token) {
         if (token) {
             std::cout << "Listening on port " << 9001 << std::endl;
