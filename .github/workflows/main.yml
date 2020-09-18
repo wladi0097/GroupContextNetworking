@@ -23,3 +23,16 @@ jobs:
       run: cmake --build . --target Net
     - name: test with memory check
       run: cd test &&valgrind --tool=memcheck  --leak-check=full --leak-resolution=med --track-origins=yes --vgdb=no --error-exitcode=1 ./Catch_tests_run -d yes
+
+  sonarcloud:
+      name: SonarCloud
+      runs-on: ubuntu-20.04
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+        - name: SonarCloud Scan
+          uses: SonarSource/sonarcloud-github-action@master
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
