@@ -17,11 +17,11 @@ find_package(ZLIB)
 add_custom_target(
         uSockets
         COMMAND make
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/deps/uWebSockets/uSockets/
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/deps/uWebSockets/uSockets/
 )
 
 add_executable(Net main.cpp ${SOURCES} ${SOURCES_MAIN})
 
 target_link_libraries(Net ZLIB::ZLIB)
-target_link_libraries(Net ${CMAKE_SOURCE_DIR}/deps/uWebSockets/uSockets/uSockets.a)
+target_link_libraries(Net ${PROJECT_SOURCE_DIR}/deps/uWebSockets/uSockets/uSockets.a)
 add_dependencies(Net uSockets)
