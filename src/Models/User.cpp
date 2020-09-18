@@ -25,38 +25,23 @@ SOFTWARE.
 #include "Group.h"
 #include "../Utils/UUID.h"
 
-Models::User::User(Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isGroupLeader)
-        : id(Utils::generateUUID()), group(group), userWebsocket(userWebsocket), isGroupLeader(isGroupLeader) {}
+Models::User::User(Group *group, bool isGroupLeader)
+        : id(Utils::generateUUID()), isGroupLeader(isGroupLeader) {}
 
 std::string Models::User::getId() { return id; }
 
 bool Models::User::getIsGroupLeader() const { return isGroupLeader; }
 
-void Models::User::handleMessage(std::string_view message) {
-    if(this->getIsGroupLeader()) {
-        switch ((int)message[0] - '0') {
-            case MessageType::HostToSingleUser: {
-                Models::User *user = this->group->getUser(message.substr(1, 23));
-                if(user != nullptr) {
-                    user->send(MessageType::HostToSingleUser, message);
-                }
-                break;
-            }
-            case MessageType::HostToAllUser:
-                this->group->sendToAll(message);
-                break;
-        }
-    } else {
-        this->group->getHost()->send(MessageType::UserToHost, message);
-    }
-}
 
 void Models::User::send(MessageType type, std::string_view message) {
     std::string messageString(message);
     this->userWebsocket->send(std::to_string(type) + messageString);
 }
 
-void Models::User::leave() {
-    this->userWebsocket->end(3, "closed by host");
-    this->group->removeUser(this->id);
+void Models::User::setWebSocket(uWS::WebSocket<false, true> *ws) {
+    this->userWebsocket = ws;
+}
+
+void Models::User::disconnect() {
+    this->userWebsocket->end(2);
 }

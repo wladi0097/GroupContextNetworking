@@ -28,6 +28,7 @@ SOFTWARE.
 #include "User.h"
 #include "../../deps/uWebSockets/src/App.h"
 #include "MessageType.h"
+#include "UserData.h"
 
 class GroupManager {
 private:
@@ -35,14 +36,16 @@ private:
 
     int16_t getGroupIndex(const std::string &groupId);
 
-    void removeGroup(const std::string &groupId);
+    void removeGroup(Models::Group *groupId);
 
 public:
-    Models::User *joinNewGroup(uWS::WebSocket<false, true> *userWebsocket);
+    Models::Group *joinNewGroup();
 
-    static Models::User *joinGroup(Models::Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isHost);
-
-    void leaveGroup(Models::User *user);
+    static Models::User *joinGroup(Models::Group *group, bool isHost);
 
     Models::Group *getGroup(const std::string &groupId);
+
+    static void handleMessage(UserData *userdata, std::string_view message);
+
+    void handleLeave(UserData *userdata);
 };

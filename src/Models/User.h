@@ -34,20 +34,19 @@ namespace Models {
     private:
         std::string id;
         bool isGroupLeader;
-        Group *group;
         uWS::WebSocket<false, true> *userWebsocket;
 
     public:
-        explicit User(Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isGroupLeader);
+        explicit User(Group *group, bool isGroupLeader);
 
         std::string getId();
 
-        bool getIsGroupLeader() const;
-
-        void handleMessage(std::string_view message);
+        [[nodiscard]] bool getIsGroupLeader() const;
 
         void send(MessageType type, std::string_view message);
 
-        void leave();
+        void setWebSocket(uWS::WebSocket<false, true> *ws);
+
+        void disconnect();
     };
 }  // namespace Models

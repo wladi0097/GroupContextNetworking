@@ -27,20 +27,19 @@ SOFTWARE.
 #include "../../deps/uWebSockets/src/App.h"
 #include <GroupManager.h>
 #include <User.h>
+#include "UserData.h"
 
 
 void WebSocket::init() {
     std::unique_ptr<GroupManager> gm = std::make_unique<GroupManager>();
 
-    struct UserData {
-        std::string_view path;
-        Models::User *user;
-    };
 
-    auto upgrade = [](auto *res, auto *req, auto *context) {
-        auto url = req->getUrl();
+    auto setInitialValues = [](auto *res,  auto *req, auto *context, auto *user, auto *group) {
         res->template upgrade<UserData>(
-                {.path = url},
+                {
+                    .user = user,
+                    .group = group
+                    },
                 req->getHeader("sec-websocket-key"),
                 req->getHeader("sec-websocket-protocol"),
                 req->getHeader("sec-websocket-extensions"),
@@ -48,42 +47,53 @@ void WebSocket::init() {
         );
     };
 
-    auto open = [&gm](uWS::WebSocket<false, true> *ws) {
-        auto url = static_cast<UserData *>(ws->getUserData())->path;
+    auto getUserData = [](auto *ws) -> UserData* {
+        auto *userData = static_cast<UserData *>(ws->getUserData());
+        if (userData->user == nullptr) {
+            ws->end(2, "err: unknown user");
+            return nullptr;
+        }
+        return userData;
+    };
+
+    auto upgrade = [&gm, &setInitialValues](auto *res, auto *req, auto *context) {
+        auto url = req->getUrl();
 
         if (url == "/new") {
-            Models::User *newUser = gm->joinNewGroup(ws);
-            static_cast<UserData *>(ws->getUserData())->user = newUser;
+            Models::Group *group = gm->joinNewGroup();
+            setInitialValues(res, req, context, group->getHost(), group);
             return;
         }
 
         if (url.length() == 5) {
             Models::Group *group = gm->getGroup(std::string(url).erase(0, 1));
             if (group != nullptr) {
-                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group, ws, false);
+                setInitialValues(res, req, context, gm->joinGroup(group, false), group);
                 return;
             }
         }
-
-        ws->end(5, "Unsupported Open request");
     };
 
-    auto message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
-        auto *userData = static_cast<UserData *>(ws->getUserData());
-        if (userData->user == nullptr) {
-            ws->end(2, "err: unknown user");
-            return;
-        }
-        userData->user->handleMessage(message);
+    auto open = [&getUserData](uWS::WebSocket<false, true> *ws) {
+        UserData* userData = getUserData(ws);
+        if (!userData) {return;}
+
+        userData->user->setWebSocket(ws);
+        ws->send(userData->user->getId());
     };
 
-    auto close = [&gm](auto *ws, int code, std::string_view message) {
-        auto *userData = static_cast<UserData *>(ws->getUserData());
-        if (userData->user == nullptr) {
-            ws->end(2, "err: unknown user");
-            return;
-        }
-        gm->leaveGroup(userData->user);
+    auto message = [&gm, &getUserData](auto *ws, std::string_view message, uWS::OpCode opCode) {
+        UserData* userData = getUserData(ws);
+        if (!userData) {return;}
+
+        gm->handleMessage(userData, message);
+    };
+
+    auto close = [&gm, getUserData](auto *ws, int code, std::string_view message) {
+        UserData* userData = getUserData(ws);
+        if (!userData) {return;}
+
+        gm->handleLeave(userData);
     };
 
     uWS::App().ws<UserData>("/*", {

@@ -37,7 +37,7 @@ namespace Models {
         int getUserIndex(const std::string &id);
 
     public:
-        explicit Group(uWS::WebSocket<false, true> *userWebsocket);
+        explicit Group();
 
         std::string getId();
 
@@ -45,10 +45,12 @@ namespace Models {
 
         User *getUser(const std::string_view &userId);
 
-        User *addUser(uWS::WebSocket<false, true> *userWebsocket, bool isCreator);
+        User *addUser(bool isCreator);
 
-        void removeUser(const std::string &userId);
+        void removeUser(Models::User *user);
 
         void sendToAll(std::string_view message);
+
+        void closeWebSocketSessionForAllUsers();
     };
 }  // namespace Models

@@ -25,17 +25,17 @@ SOFTWARE.
 #include <memory>
 
 
-Models::User *GroupManager::joinNewGroup(uWS::WebSocket<false, true> *userWebsocket) {
-    std::unique_ptr<Models::Group> group = std::make_unique<Models::Group>(userWebsocket);
+Models::Group *GroupManager::joinNewGroup() {
+    std::unique_ptr<Models::Group> group = std::make_unique<Models::Group>();
     groups.push_back(std::move(group));
     Models::Group *newGroup = groups.back().get();
 
-    return newGroup->getHost();
+    return newGroup;
 }
 
 Models::User *
-GroupManager::joinGroup(Models::Group *group, uWS::WebSocket<false, true> *userWebsocket, bool isHost = false) {
-    auto *user = group->addUser(userWebsocket, isHost);
+GroupManager::joinGroup(Models::Group *group, bool isHost = false) {
+    auto *user = group->addUser(isHost);
     group->getHost()->send(MessageType::newUser ,user->getId());
     return user;
 }
@@ -50,16 +50,10 @@ Models::Group *GroupManager::getGroup(const std::string &groupId) {
     return nullptr;
 }
 
-void GroupManager::leaveGroup(Models::User *user) {
-    if (user->getIsGroupLeader()) {
-//        this->removeGroup(user->);
-    } else {
-        user->leave();
-    }
-}
+void GroupManager::removeGroup(Models::Group *group) {
+    group->closeWebSocketSessionForAllUsers();
 
-void GroupManager::removeGroup(const std::string &groupId) {
-    const int16_t index = getGroupIndex(groupId);
+    const int16_t index = getGroupIndex(group->getId());
     if (index != -1) {
         groups.erase(groups.begin() + index);
     }
@@ -71,4 +65,31 @@ int16_t GroupManager::getGroupIndex(const std::string &groupId) {
             return i;
     }
     return -1;
+}
+
+void GroupManager::handleMessage(UserData *userdata, std::string_view message) {
+    if(userdata->user->getIsGroupLeader()) {
+        switch ((int)message[0] - '0') {
+            case MessageType::HostToSingleUser: {
+                Models::User *user = userdata->group->getUser(message.substr(1, 23));
+                if(user != nullptr) {
+                    user->send(MessageType::HostToSingleUser, message);
+                }
+                break;
+            }
+            case MessageType::HostToAllUser:
+                userdata->group->sendToAll(message);
+                break;
+        }
+    } else {
+        userdata->group->getHost()->send(MessageType::UserToHost, message);
+    }
+}
+
+void GroupManager::handleLeave(UserData *userdata) {
+    if (userdata->user->getIsGroupLeader()) {
+        this->removeGroup(userdata->group);
+    } else {
+        userdata->group->removeUser(userdata->user);
+    }
 }
