@@ -14,6 +14,14 @@ file(GLOB SOURCES_MAIN "src/*.cpp")
 
 find_package(ZLIB)
 
+add_custom_target(
+        uSockets
+        COMMAND make
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/deps/uWebSockets/uSockets/
+)
+
 add_executable(Net main.cpp ${SOURCES} ${SOURCES_MAIN})
+
 target_link_libraries(Net ZLIB::ZLIB)
 target_link_libraries(Net ${CMAKE_SOURCE_DIR}/deps/uWebSockets/uSockets/uSockets.a)
+add_dependencies(Net uSockets)
