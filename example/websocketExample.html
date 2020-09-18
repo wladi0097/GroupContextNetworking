@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Daddy</title>
+    <button onclick="ws('main' + ++window.connectedCounter, 'new')">add new</button>
     <style>
         body {
             background-color: #000;
@@ -15,7 +16,7 @@
 </head>
 <body>
 <script type="text/javascript">
-
+window.connectedCounter = 0;
 
 
     class wss {
@@ -50,7 +51,7 @@
             console.log('getMessage', this.id, evt.data);
         }
 
-        doSend(message) {
+        send(message) {
             console.log('sending', this.id, message)
             this.websocket.send(message);
         }
