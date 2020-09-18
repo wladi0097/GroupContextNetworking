@@ -36,25 +36,25 @@ void WebSocket::init() {
         Models::User *user;
     };
 
-    auto open = [&gm](uWS::WebSocket<false, true> *ws, uWS::HttpRequest *req) {
-        auto url = req->getUrl();
-
-        if (url == "/new") {
-            Models::User *newUser = gm->joinNewGroup(ws);
-            static_cast<UserData *>(ws->getUserData())->user = newUser;
-            return;
-        }
-
-        if (url.length() == 5) {
-            Models::Group *group = gm->getGroup(std::string(url).erase(0, 1));
-            if (group != nullptr) {
-                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group, ws, false);
-                return;
-            }
-        }
-
-        ws->end(5, "Unsupported Open request");
-    };
+//    auto open = [&gm](uWS::WebSocket<false, true> *ws) {
+//        auto url = req->getUrl();
+//
+//        if (url == "/new") {
+//            Models::User *newUser = gm->joinNewGroup(ws);
+//            static_cast<UserData *>(ws->getUserData())->user = newUser;
+//            return;
+//        }
+//
+//        if (url.length() == 5) {
+//            Models::Group *group = gm->getGroup(std::string(url).erase(0, 1));
+//            if (group != nullptr) {
+//                static_cast<UserData *>(ws->getUserData())->user = gm->joinGroup(group, ws, false);
+//                return;
+//            }
+//        }
+//
+//        ws->end(5, "Unsupported Open request");
+//    };
 
     auto message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
         auto *userData = static_cast<UserData *>(ws->getUserData());
@@ -79,7 +79,7 @@ void WebSocket::init() {
             .maxPayloadLength = 16 * 1024 * 1024,
             .idleTimeout = 1000,
             .maxBackpressure = 1 * 1024 * 1204,
-            .open = open,
+//            .open = open,
             .message = message
     }).listen(9001, [](auto *token) {
         if (token) {
