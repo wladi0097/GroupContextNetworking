@@ -72,6 +72,8 @@ void WebSocket::init() {
                 return;
             }
         }
+
+        res->end();
     };
 
     auto open = [&getUserData](uWS::WebSocket<false, true> *ws) {
